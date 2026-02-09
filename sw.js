@@ -6,7 +6,7 @@
  *   - Background sync for pending delivery records
  */
 
-var CACHE_NAME = 'route-v1';
+var CACHE_NAME = 'route-v1'; // bump version to bust cache on deploy
 var APP_SHELL = [
   './',
   './index.html',

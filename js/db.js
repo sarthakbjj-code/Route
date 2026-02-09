@@ -7,8 +7,8 @@
  *   meta     – small key/value pairs (e.g. last_master_update)
  */
 
-const DB_NAME = 'route_pwa';
-const DB_VERSION = 1;
+var DB_NAME = 'route_pwa';
+var DB_VERSION = 1;
 
 function openDB() {
   return new Promise(function (resolve, reject) {

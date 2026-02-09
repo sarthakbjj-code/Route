@@ -12,7 +12,8 @@
   'use strict';
 
   /* ---- configuration ---- */
-  // Replace with your deployed Apps Script web-app URL
+  // IMPORTANT: Replace with your deployed Apps Script web-app URL before use.
+  // Sync calls will be skipped while this is empty.
   var API_URL = '';
   var BATCH_SIZE = 50;
   var MAX_RETRIES = 5;
@@ -30,6 +31,9 @@
   /* ---- helpers ---- */
 
   function postJSON(payload) {
+    if (!API_URL) {
+      return Promise.reject(new Error('API_URL not configured — set it in js/sync.js'));
+    }
     return fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
