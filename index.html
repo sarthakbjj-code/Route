@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Route — Delivery Tracker</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1a73e8">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header>
+    <h1>Route</h1>
+    <span class="badge">Pending: <span id="pending-count">0</span></span>
+  </header>
+
+  <div id="sync-status">Initializing…</div>
+
+  <form id="delivery-form" class="card" autocomplete="off">
+    <label for="bp_number">BP Number</label>
+    <input id="bp_number" name="bp_number" type="text" required placeholder="e.g. BP123">
+    <div id="customer_name_display"></div>
+
+    <label for="agent_email">Agent Email</label>
+    <input id="agent_email" name="agent_email" type="email" placeholder="agent@example.com">
+
+    <label for="action_type">Action</label>
+    <select id="action_type" name="action_type">
+      <option value="complete_delivery">Complete Delivery</option>
+      <option value="fail_delivery">Fail Delivery</option>
+      <option value="location_update">Location Update</option>
+    </select>
+
+    <label for="status">Status</label>
+    <select id="status" name="status">
+      <option value="delivered">Delivered</option>
+      <option value="failed">Failed</option>
+      <option value="pending">Pending</option>
+    </select>
+
+    <label for="delivery_type">Delivery Type</label>
+    <select id="delivery_type" name="delivery_type">
+      <option value="bill">Bill</option>
+      <option value="notice">Notice</option>
+      <option value="parcel">Parcel</option>
+    </select>
+
+    <label for="barcode">Barcode</label>
+    <input id="barcode" name="barcode" type="text" placeholder="Scan or enter barcode">
+
+    <label for="remarks">Remarks</label>
+    <textarea id="remarks" name="remarks" placeholder="Optional notes"></textarea>
+
+    <button type="submit" class="btn">Save Record</button>
+  </form>
+
+  <button id="sync-btn" class="btn" style="width:100%;">Sync Now</button>
+
+  <!-- Scripts: db → sync → app (dependency order) -->
+  <script src="js/db.js"></script>
+  <script src="js/sync.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').then(function (reg) {
+        console.log('SW registered', reg.scope);
+
+        // Listen for background-sync messages from service worker
+        navigator.serviceWorker.addEventListener('message', function (event) {
+          if (event.data && event.data.type === 'sync-deliveries') {
+            RouteSync.syncPendingRecords().catch(function () {});
+          }
+        });
+      });
+    }
+  </script>
+</body>
+</html>
