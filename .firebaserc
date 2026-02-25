@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "delivery-dev",
+    "production": "delivery-prod"
+  }
+}

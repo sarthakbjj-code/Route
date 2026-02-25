@@ -1,0 +1,91 @@
+name: Lint and Type Check
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'feature/**'
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  lint-admin-dashboard:
+    name: Lint Admin Dashboard
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: admin-dashboard/package-lock.json
+
+      - name: Install dependencies
+        working-directory: admin-dashboard
+        run: npm ci
+
+      - name: Run ESLint
+        working-directory: admin-dashboard
+        run: npm run lint
+
+      - name: TypeScript check
+        working-directory: admin-dashboard
+        run: npm run type-check
+
+  lint-functions:
+    name: Lint Cloud Functions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: functions/package-lock.json
+
+      - name: Install dependencies
+        working-directory: functions
+        run: npm ci
+
+      - name: Run ESLint
+        working-directory: functions
+        run: npm run lint
+
+      - name: TypeScript check
+        working-directory: functions
+        run: npm run type-check
+
+  lint-agent-app:
+    name: Lint Agent App
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: agent-app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: agent-app
+        run: npm ci
+
+      - name: Run ESLint
+        working-directory: agent-app
+        run: npm run lint
+
+      - name: TypeScript check
+        working-directory: agent-app
+        run: npm run type-check

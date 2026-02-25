@@ -1,0 +1,39 @@
+name: Deploy Admin Dashboard to Firebase Hosting
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'admin-dashboard/**'
+  workflow_dispatch:
+
+jobs:
+  deploy-web:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: admin-dashboard/package-lock.json
+
+      - name: Install dependencies
+        working-directory: admin-dashboard
+        run: npm ci
+
+      - name: Build admin dashboard
+        working-directory: admin-dashboard
+        run: npm run build
+
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PROD }}
+          channelId: live
+          projectId: delivery-prod
