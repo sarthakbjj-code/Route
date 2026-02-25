@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Agents can read and write their own delivery records
+    match /deliveries/{deliveryId} {
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.agentId;
+      allow create: if request.auth != null;
+    }
+
+    // Zone data is readable by authenticated users
+    match /zones/{zoneId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Master data (barcode/shipment info) readable by authenticated agents
+    match /masterData/{recordId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Admin-only access to reports and analytics
+    match /reports/{reportId} {
+      allow read, write: if request.auth != null && request.auth.token.admin == true;
+    }
+  }
+}
